@@ -149,18 +149,11 @@ module.exports = yeoman.Base.extend({
     },
     confirmDirectoryIsEmpty: function() {
       if (directoryExists(this.gemDir) && !directoryIsEmpty(this.gemDir)) {
-        return this.prompt([
-          {
-            type: 'confirm',
-            name: 'continueAlthoughDirIsntEmpty',
-            message: "The destination directory isn't empty: " + chalk.red(this.gemDir) + "\nContinue anyway?",
-            default: false
-          }
-        ]).then(function (props) {
-          if (!props.continueAlthoughDirIsntEmpty) {
-            process.exit();
-          }
-        });
+        this.log(
+          "The destination directory must be empty in order to continue:" + "\n" +
+            chalk.red(this.gemDir) + "\n"
+        );
+        process.exit();
       }
     }
   },
@@ -172,17 +165,7 @@ module.exports = yeoman.Base.extend({
     }
   },
 
-  default: {
-    confirm: function() {
-      console.log(JSON.stringify(this.props));
-    }
-  },
-
   writing: {
-    // TODO copy README
-    // TODO create CLI if it has one
-    // TODO tests
-    // TODO try running bundle install
     createDirectoryStructure: function() {
       mkdirp(this.destinationPath("lib", this.props.gemName));
     },
@@ -209,13 +192,101 @@ module.exports = yeoman.Base.extend({
     gemfile: function() {
       this.fs.copy(
         this.templatePath('Gemfile'),
-        this.destinationPath()
+        this.destinationPath('Gemfile')
+      );
+    },
+
+    readme: function() {
+      this.fs.copyTpl(
+        this.templatePath('README.md'),
+        this.destinationPath('README.md'),
+        {
+          gemName: this.props.gemName,
+          gemDescription: this.props.gemDescription,
+          hasCLI: this.props.hasCLI
+        }
+      );
+    },
+
+    main: function() {
+      this.fs.copyTpl(
+        this.templatePath('lib', 'gemName.rb'),
+        this.destinationPath('lib', this.props.gemName + '.rb'),
+        {
+          gemName: this.props.gemName,
+          moduleName: this.props.moduleName
+        }
+      );
+
+      this.fs.copyTpl(
+        this.templatePath('lib', 'gemName', 'version.rb'),
+        this.destinationPath('lib', this.props.gemName,  'version.rb'),
+        {
+          moduleName: this.props.moduleName
+        }
+      );
+    },
+
+    cli: function() {
+      if (this.props.hasCLI) {
+        mkdirp(this.destinationPath("bin"));
+        this.fs.copyTpl(
+          this.templatePath('bin', 'gemName'),
+          this.destinationPath('bin', this.props.gemName),
+          {
+            gemName: this.props.gemName,
+            moduleName: this.props.moduleName
+          }
+        );
+
+        this.fs.copyTpl(
+          this.templatePath('lib', 'gemName', 'cli.rb'),
+          this.destinationPath('lib', this.props.gemName, 'cli.rb'),
+          {
+            gemName: this.props.gemName,
+            moduleName: this.props.moduleName
+          }
+        );
+      }
+    },
+
+    rspec: function() {
+      if (this.props.hasTests) {
+        mkdirp(this.destinationPath("spec", this.props.gemName));
+        this.fs.copyTpl(
+          this.templatePath('spec', 'spec_helper.rb'),
+          this.destinationPath('spec', 'spec_helper.rb'),
+          {
+            gemName: this.props.gemName
+          }
+        );
+      }
+    },
+
+    git: function() {
+      this.fs.copy(
+        this.templatePath('gitignore'),
+        this.destinationPath('.gitignore')
+      );
+
+      this.spawnCommandSync("git", ["init"], { cwd: this.destinationPath() });
+    }
+  },
+
+  install: function() {
+    if (this.props.hasCLI) {
+      fs.chmodSync(
+        this.destinationPath("bin", this.props.gemName),
+        parseInt('0755', 8)
       );
     }
-
   },
 
   end: function() {
-    // TODO say goodbye
+    this.log(yosay(
+      "You're done!" + "\n" +
+        "Make at least one commit, and when you're ready, run `bundle install`." + "\n\n" +
+        "Have fun hacking on your gem!"
+    ));
   }
 });
