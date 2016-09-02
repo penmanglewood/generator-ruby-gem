@@ -1,9 +1,9 @@
-let fs = require('fs');
-let yeoman = require('yeoman-generator');
-let chalk = require('chalk');
-let yosay = require('yosay');
-let _ = require('lodash');
-let mkdirp = require('mkdirp');
+const fs = require('fs');
+const yeoman = require('yeoman-generator');
+const chalk = require('chalk');
+const yosay = require('yosay');
+const _ = require('lodash');
+const mkdirp = require('mkdirp');
 
 function directoryExists(path) {
   try {
@@ -20,7 +20,7 @@ function directoryIsEmpty(path) {
 }
 
 function kebabToCamel(str) {
-  var camel = _.camelCase(str.replace(/-/g, ' '));
+  let camel = _.camelCase(str.replace(/-/g, ' '));
   if (camel.length > 0) {
     return camel[0].toUpperCase() + camel.slice(1);
   }
@@ -57,7 +57,7 @@ module.exports = yeoman.Base.extend({
           },
           filter: function(input) {
             return _.kebabCase(input);
-          }
+          },
         },
         {
           type: 'input',
@@ -70,7 +70,7 @@ module.exports = yeoman.Base.extend({
 
             return true;
           },
-          default: this.user.git.name()
+          default: this.user.git.name(),
         },
         {
           type: 'input',
@@ -83,41 +83,41 @@ module.exports = yeoman.Base.extend({
 
             return true;
           },
-          default: this.user.git.email()
+          default: this.user.git.email(),
         },
         {
           type: 'input',
           name: 'projectHomepage',
-          message: 'What is the project\'s homepage?'
+          message: 'What is the project\'s homepage?',
         },
         {
           type: 'input',
           name: 'gemSummary',
-          message: 'Please provide a short summary:'
+          message: 'Please provide a short summary:',
         },
         {
           type: 'input',
           name: 'gemDescription',
-          message: 'Please provide a short description:'
+          message: 'Please provide a short description:',
         },
         {
           type: 'input',
           name: 'license',
           message: 'What\'s the license of your gem?',
-          default: 'ISC'
+          default: 'ISC',
         },
         {
           type: 'confirm',
           name: 'hasCLI',
           message: 'Does your gem have a CLI?',
-          default: false
+          default: false,
         },
         {
           type: 'confirm',
           name: 'hasTests',
           message: 'You\'re going to write tests, right? Right??',
-          default: true
-        }
+          default: true,
+        },
       ];
 
       return this.prompt(prompts).then(function (props) {
@@ -140,7 +140,7 @@ module.exports = yeoman.Base.extend({
         },
         filter: function(input) {
           return kebabToCamel(input);
-        }
+        },
       }).then(function (props) {
         this.props.moduleName = props.moduleName;
       }.bind(this));
@@ -153,7 +153,7 @@ module.exports = yeoman.Base.extend({
         );
         process.exit();
       }
-    }
+    },
   },
 
   configuring: function() {
@@ -182,7 +182,7 @@ module.exports = yeoman.Base.extend({
           gemDescription: this.props.gemDescription,
           license: this.props.license,
           hasCLI: this.props.hasCLI,
-          hasTests: this.props.hasTests
+          hasTests: this.props.hasTests,
         }
       );
     },
@@ -201,7 +201,7 @@ module.exports = yeoman.Base.extend({
         {
           gemName: this.props.gemName,
           gemDescription: this.props.gemDescription,
-          hasCLI: this.props.hasCLI
+          hasCLI: this.props.hasCLI,
         }
       );
     },
@@ -212,7 +212,7 @@ module.exports = yeoman.Base.extend({
         this.destinationPath('lib', this.props.gemName + '.rb'),
         {
           gemName: this.props.gemName,
-          moduleName: this.props.moduleName
+          moduleName: this.props.moduleName,
         }
       );
 
@@ -220,7 +220,7 @@ module.exports = yeoman.Base.extend({
         this.templatePath('lib', 'gemName', 'version.rb'),
         this.destinationPath('lib', this.props.gemName,  'version.rb'),
         {
-          moduleName: this.props.moduleName
+          moduleName: this.props.moduleName,
         }
       );
     },
@@ -233,7 +233,7 @@ module.exports = yeoman.Base.extend({
           this.destinationPath('bin', this.props.gemName),
           {
             gemName: this.props.gemName,
-            moduleName: this.props.moduleName
+            moduleName: this.props.moduleName,
           }
         );
 
@@ -242,7 +242,7 @@ module.exports = yeoman.Base.extend({
           this.destinationPath('lib', this.props.gemName, 'cli.rb'),
           {
             gemName: this.props.gemName,
-            moduleName: this.props.moduleName
+            moduleName: this.props.moduleName,
           }
         );
       }
@@ -255,7 +255,7 @@ module.exports = yeoman.Base.extend({
           this.templatePath('spec', 'spec_helper.rb'),
           this.destinationPath('spec', 'spec_helper.rb'),
           {
-            gemName: this.props.gemName
+            gemName: this.props.gemName,
           }
         );
       }
@@ -268,7 +268,7 @@ module.exports = yeoman.Base.extend({
       );
 
       this.spawnCommandSync('git', ['init'], { cwd: this.destinationPath() });
-    }
+    },
   },
 
   install: function() {
@@ -286,5 +286,5 @@ module.exports = yeoman.Base.extend({
         'Make at least one commit, and when you\'re ready, run `bundle install`.' + '\n\n' +
         'Have fun hacking on your gem!'
     ));
-  }
+  },
 });
