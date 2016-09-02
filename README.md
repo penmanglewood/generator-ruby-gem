@@ -1,4 +1,4 @@
-# generator-ruby-gem [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# generator-ruby-gem [![NPM version][npm-image]][npm-url]
 > A helper generator to create Ruby gems
 
 ## Installation
@@ -23,7 +23,3 @@ MIT © [Eric Rubio]()
 
 [npm-image]: https://badge.fury.io/js/generator-ruby-gem.svg
 [npm-url]: https://npmjs.org/package/generator-ruby-gem
-[travis-image]: https://travis-ci.org/penmanglewood/generator-ruby-gem.svg?branch=master
-[travis-url]: https://travis-ci.org/penmanglewood/generator-ruby-gem
-[daviddm-image]: https://david-dm.org/penmanglewood/generator-ruby-gem.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/penmanglewood/generator-ruby-gem
