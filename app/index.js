@@ -29,7 +29,7 @@ function kebabToCamel(str) {
 }
 
 module.exports = yeoman.Base.extend({
-  constructor: function() {
+  constructor: function () {
     yeoman.Base.apply(this, arguments);
 
     this.argument('gemName', {type: String, required: false});
@@ -48,14 +48,14 @@ module.exports = yeoman.Base.extend({
           name: 'gemName',
           message: 'What is the name of your gem?',
           default: this.gemName,
-          validate: function(input) {
+          validate: function (input) {
             if (!input) {
               return 'The gem needs a name.';
             }
 
             return true;
           },
-          filter: function(input) {
+          filter: function (input) {
             return _.kebabCase(input);
           },
         },
@@ -63,7 +63,7 @@ module.exports = yeoman.Base.extend({
           type: 'input',
           name: 'authorName',
           message: 'What is the author\'s name?',
-          validate: function(input) {
+          validate: function (input) {
             if (!input) {
               return 'The author\'s name is required.';
             }
@@ -76,7 +76,7 @@ module.exports = yeoman.Base.extend({
           type: 'input',
           name: 'authorEmail',
           message: 'What is the author\'s email address?',
-          validate: function(input) {
+          validate: function (input) {
             if (!input) {
               return 'The author\'s email is required.';
             }
@@ -125,27 +125,27 @@ module.exports = yeoman.Base.extend({
         this.props = props;
       }.bind(this));
     },
-    rubyModule: function() {
+    rubyModule: function () {
       return this.prompt({
         type: 'input',
         name: 'moduleName',
         message: 'What do you want to call the Ruby module?',
         default: kebabToCamel(this.props.gemName),
-        validate: function(input) {
+        validate: function (input) {
           if (!input) {
             return 'The Ruby module needs a name';
           }
 
           return true;
         },
-        filter: function(input) {
+        filter: function (input) {
           return kebabToCamel(input);
         },
       }).then(function (props) {
         this.props.moduleName = props.moduleName;
       }.bind(this));
     },
-    confirmDirectoryIsEmpty: function() {
+    confirmDirectoryIsEmpty: function () {
       if (directoryExists(this.gemDir) && !directoryIsEmpty(this.gemDir)) {
         this.log(
           'The destination directory must be empty in order to continue:' + '\n' +
@@ -156,7 +156,7 @@ module.exports = yeoman.Base.extend({
     },
   },
 
-  configuring: function() {
+  configuring: function () {
     if (!directoryExists(this.gemDir)) {
       mkdirp(this.gemDir);
       this.destinationRoot(this.props.gemName);
@@ -164,11 +164,11 @@ module.exports = yeoman.Base.extend({
   },
 
   writing: {
-    createDirectoryStructure: function() {
+    createDirectoryStructure: function () {
       mkdirp(this.destinationPath('lib', this.props.gemName));
     },
 
-    gemspec: function() {
+    gemspec: function () {
       this.fs.copyTpl(
         this.templatePath('default.gemspec'),
         this.destinationPath(this.props.gemName + '.gemspec'),
@@ -187,14 +187,14 @@ module.exports = yeoman.Base.extend({
       );
     },
 
-    gemfile: function() {
+    gemfile: function () {
       this.fs.copy(
         this.templatePath('Gemfile'),
         this.destinationPath('Gemfile')
       );
     },
 
-    readme: function() {
+    readme: function () {
       this.fs.copyTpl(
         this.templatePath('README.md'),
         this.destinationPath('README.md'),
@@ -206,7 +206,7 @@ module.exports = yeoman.Base.extend({
       );
     },
 
-    main: function() {
+    main: function () {
       this.fs.copyTpl(
         this.templatePath('lib', 'gemName.rb'),
         this.destinationPath('lib', this.props.gemName + '.rb'),
@@ -225,7 +225,7 @@ module.exports = yeoman.Base.extend({
       );
     },
 
-    cli: function() {
+    cli: function () {
       if (this.props.hasCLI) {
         mkdirp(this.destinationPath('bin'));
         this.fs.copyTpl(
@@ -248,7 +248,7 @@ module.exports = yeoman.Base.extend({
       }
     },
 
-    rspec: function() {
+    rspec: function () {
       if (this.props.hasTests) {
         mkdirp(this.destinationPath('spec', this.props.gemName));
         this.fs.copyTpl(
@@ -261,7 +261,7 @@ module.exports = yeoman.Base.extend({
       }
     },
 
-    git: function() {
+    git: function () {
       this.fs.copy(
         this.templatePath('gitignore'),
         this.destinationPath('.gitignore')
@@ -271,7 +271,7 @@ module.exports = yeoman.Base.extend({
     },
   },
 
-  install: function() {
+  install: function () {
     if (this.props.hasCLI) {
       fs.chmodSync(
         this.destinationPath('bin', this.props.gemName),
@@ -280,7 +280,7 @@ module.exports = yeoman.Base.extend({
     }
   },
 
-  end: function() {
+  end: function () {
     this.log(yosay(
       'You\'re done!' + '\n' +
         'Make at least one commit, and when you\'re ready, run `bundle install`.' + '\n\n' +
