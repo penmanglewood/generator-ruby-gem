@@ -9,7 +9,7 @@ function directoryExists(path) {
   try {
     const stats = fs.lstatSync(path);
     return stats.isDirectory();
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 }
@@ -29,8 +29,8 @@ function kebabToCamel(str) {
 }
 
 module.exports = yeoman.Base.extend({
-  constructor() {
-    yeoman.Base.apply(this, arguments);
+  constructor(...args) {
+    yeoman.Base.apply(this, args);
 
     this.argument('gemName', { type: String, required: false });
     this.gemName = _.kebabCase(this.gemName);
@@ -42,7 +42,7 @@ module.exports = yeoman.Base.extend({
         `Welcome to the ${chalk.red('Ruby gem')} generator!`
       ));
 
-      var prompts = [
+      const prompts = [
         {
           type: 'input',
           name: 'gemName',
@@ -120,10 +120,10 @@ module.exports = yeoman.Base.extend({
         },
       ];
 
-      return this.prompt(prompts).then(function (props) {
+      return this.prompt(prompts).then((props) => {
         this.gemDir = this.destinationPath(props.gemName);
         this.props = props;
-      }.bind(this));
+      });
     },
     rubyModule() {
       return this.prompt({
@@ -141,9 +141,9 @@ module.exports = yeoman.Base.extend({
         filter(input) {
           return kebabToCamel(input);
         },
-      }).then(function (props) {
+      }).then((props) => {
         this.props.moduleName = props.moduleName;
-      }.bind(this));
+      });
     },
     confirmDirectoryIsEmpty() {
       if (directoryExists(this.gemDir) && !directoryIsEmpty(this.gemDir)) {
@@ -217,7 +217,7 @@ module.exports = yeoman.Base.extend({
 
       this.fs.copyTpl(
         this.templatePath('lib', 'gemName', 'version.rb'),
-        this.destinationPath('lib', this.props.gemName,  'version.rb'),
+        this.destinationPath('lib', this.props.gemName, 'version.rb'),
         {
           moduleName: this.props.moduleName,
         }
@@ -280,8 +280,7 @@ module.exports = yeoman.Base.extend({
   },
 
   end() {
-    this.log(yosay(
-      'You\'re done!\nMake at least one commit, and when you\'re ready, run `bundle install`.\n\nHave fun hacking on your gem!'
-    ));
+    const msg = 'You\'re done!\nMake at least one commit, and when you\'re ready, run `bundle install`.\n\nHave fun hacking on your gem!';
+    this.log(yosay(msg));
   },
 });
