@@ -39,7 +39,7 @@ module.exports = yeoman.Base.extend({
   prompting: {
     gatherGemInfo() {
       this.log(yosay(
-        'Welcome to the ' + chalk.red('Ruby gem') + ' generator!'
+        `Welcome to the ${chalk.red('Ruby gem')} generator!`
       ));
 
       var prompts = [
@@ -148,8 +148,7 @@ module.exports = yeoman.Base.extend({
     confirmDirectoryIsEmpty() {
       if (directoryExists(this.gemDir) && !directoryIsEmpty(this.gemDir)) {
         this.log(
-          'The destination directory must be empty in order to continue:' + '\n' +
-            chalk.red(this.gemDir) + '\n'
+          `The destination directory must be empty in order to continue:\n${chalk.red(this.gemDir)}\n`
         );
         process.exit();
       }
@@ -171,7 +170,7 @@ module.exports = yeoman.Base.extend({
     gemspec() {
       this.fs.copyTpl(
         this.templatePath('default.gemspec'),
-        this.destinationPath(this.props.gemName + '.gemspec'),
+        this.destinationPath(`${this.props.gemName}.gemspec`),
         {
           gemName: this.props.gemName,
           moduleName: this.props.moduleName,
@@ -209,7 +208,7 @@ module.exports = yeoman.Base.extend({
     main() {
       this.fs.copyTpl(
         this.templatePath('lib', 'gemName.rb'),
-        this.destinationPath('lib', this.props.gemName + '.rb'),
+        this.destinationPath('lib', `${this.props.gemName}.rb`),
         {
           gemName: this.props.gemName,
           moduleName: this.props.moduleName,
@@ -282,9 +281,7 @@ module.exports = yeoman.Base.extend({
 
   end() {
     this.log(yosay(
-      'You\'re done!' + '\n' +
-        'Make at least one commit, and when you\'re ready, run `bundle install`.' + '\n\n' +
-        'Have fun hacking on your gem!'
+      'You\'re done!\nMake at least one commit, and when you\'re ready, run `bundle install`.\n\nHave fun hacking on your gem!'
     ));
   },
 });
