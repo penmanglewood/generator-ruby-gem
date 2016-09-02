@@ -1,9 +1,42 @@
+/* eslint-disable prefer-rest-params, max-len */
+
 const fs = require('fs');
 const yeoman = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
+
+const licenses = [
+  {
+    name: 'Apache 2.0',
+    path: 'licenses/Apache-2.0.txt',
+  },
+  {
+    name: 'BSD 2',
+    path: 'licenses/BSD-2-Clause-FreeBSD.txt',
+  },
+  {
+    name: 'BSD 3',
+    path: 'licenses/BSD-3-Clause.txt',
+  },
+  {
+    name: 'ISC',
+    path: 'licenses/ISC.txt',
+  },
+  {
+    name: 'MIT',
+    path: 'licenses/MIT.txt',
+  },
+  {
+    name: 'No License (copyrighted)',
+    path: 'licenses/nolicense.txt',
+  },
+  {
+    name: 'Unlicense',
+    path: 'licenses/unlicense.txt',
+  },
+];
 
 function directoryExists(path) {
   try {
@@ -29,12 +62,14 @@ function kebabToCamel(str) {
 }
 
 module.exports = yeoman.Base.extend({
-  constructor(...args) {
-    yeoman.Base.apply(this, args);
+  /* eslint-disable */
+  constructor: function () {
+    yeoman.Base.apply(this, arguments);
 
     this.argument('gemName', { type: String, required: false });
     this.gemName = _.kebabCase(this.gemName);
   },
+  /* eslint-enable */
 
   prompting: {
     gatherGemInfo() {
@@ -101,10 +136,11 @@ module.exports = yeoman.Base.extend({
           message: 'Please provide a short description:',
         },
         {
-          type: 'input',
+          type: 'list',
           name: 'license',
           message: 'What\'s the license of your gem?',
-          default: 'ISC',
+          default: 'MIT',
+          choices: licenses.map((l) => (l.name)),
         },
         {
           type: 'confirm',
@@ -179,7 +215,7 @@ module.exports = yeoman.Base.extend({
           projectHomepage: this.props.projectHomepage,
           gemSummary: this.props.gemSummary,
           gemDescription: this.props.gemDescription,
-          license: this.props.license,
+          license: this.props.license.name,
           hasCLI: this.props.hasCLI,
           hasTests: this.props.hasTests,
         }
@@ -220,6 +256,19 @@ module.exports = yeoman.Base.extend({
         this.destinationPath('lib', this.props.gemName, 'version.rb'),
         {
           moduleName: this.props.moduleName,
+        }
+      );
+    },
+
+    license() {
+      const licenseObj = licenses.find((e) => (e.name === this.props.license));
+
+      this.fs.copyTpl(
+        this.templatePath(licenseObj.path),
+        this.destinationPath('LICENSE'),
+        {
+          year: new Date().getFullYear(),
+          author: this.props.authorName,
         }
       );
     },
@@ -271,12 +320,11 @@ module.exports = yeoman.Base.extend({
   },
 
   install() {
-    if (this.props.hasCLI) {
-      fs.chmodSync(
-        this.destinationPath('bin', this.props.gemName),
-        parseInt('0755', 8)
-      );
-    }
+    // For some reason, Yeoman decides files without extensions are executable
+    fs.chmodSync(
+      this.destinationPath('LICENSE'),
+      parseInt('0644', 8)
+    );
   },
 
   end() {
